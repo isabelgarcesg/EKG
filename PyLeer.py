@@ -8,7 +8,7 @@ arduino = serial.Serial('COM7', 115200, timeout=0.01)  # Se debe indicar el puer
 
 time.sleep(2)
 
-numero_datos = 1000  # esto corresponde al numero de datos que se va adquirir, se puede modificar pero 1000 es un buen numero 
+numero_datos = 1000  # Para de graficar a los 1000 datos
 ECG = np.ndarray((0), dtype=int)  # aquí se almacenará la señal 
 
 # mientras el arreglo no tenga los datos que requiero los solicito
