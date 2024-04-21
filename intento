@@ -1,0 +1,47 @@
+import serial
+import csv
+import matplotlib.pyplot as plt
+from datetime import datetime
+
+# Puerto serie donde está conectado el Arduino
+puerto_serie = 'COM7'  # Cambia esto al puerto correcto en tu sistema operativo
+baudios = 115200  # Baudios del puerto serie
+
+# Número de datos que se espera recibir
+num_datos = 5000
+
+# Obtener la fecha y hora actual
+fecha_actual = datetime.now()
+# Formatear la fecha como parte del nombre del archivo
+nombre_archivo_csv = f'datos_ecg_{fecha_actual.strftime("%Y%m%d_%H%M%S")}.csv'
+
+# Configurar el puerto serie
+ser = serial.Serial(puerto_serie, baudios)
+
+# Leer datos del puerto serie
+datos_ecg = []
+tiempos = []
+
+for _ in range(num_datos):
+    lectura = ser.readline().decode().strip().split(',')
+    tiempo, dato_ecg = int(lectura[0]), int(lectura[1])
+    tiempos.append(tiempo)
+    datos_ecg.append(dato_ecg)
+
+# Cerrar el puerto serie
+ser.close()
+
+# Guardar datos en un archivo CSV
+with open(nombre_archivo_csv, 'w', newline='') as archivo_csv:
+    escritor_csv = csv.writer(archivo_csv)
+    escritor_csv.writerow(['Tiempo (ms)', 'ECG'])
+    for tiempo, dato_ecg in zip(tiempos, datos_ecg):
+        escritor_csv.writerow([tiempo, dato_ecg])
+
+# Graficar los datos
+plt.plot(tiempos, datos_ecg)
+plt.xlabel('Tiempo (ms)')
+plt.ylabel('ECG')
+plt.title('Datos de ECG')
+plt.grid(True)
+plt.show()
